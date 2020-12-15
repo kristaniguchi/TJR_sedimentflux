@@ -8,15 +8,15 @@ library(lubridate)
 #SSC sample dir
 ssc.dir <- "C:/Users/KristineT.SCCWRP2K/OneDrive - SCCWRP/OPC_sedflux/TJR_data/from_Ben_SDSU/SCCWRP/processed.samples/"
 files <- list.files(ssc.dir, full.names = TRUE)
-#read in SSC data
+#read in SSC datajr3$Sample..Number)
+sample.set <- c(as.character(tjr1$Sample.Set), as.character(tjr2$Sample.Set), as.character(tjr3$Sample.Set))
+ssc.g.mL <- c(tjr1$NFR, tjr2$NFR, tjr3$NFR)
 tjr1 <- read.csv(files[3])
 tjr1 <- tjr1[1:24,] #remove excess rows
 tjr2 <- read.csv(files[4])
 tjr3 <- read.csv(files[5])
 #create new df with combined dataset
-sample.set <- c(as.character(tjr1$Sample.Set), as.character(tjr2$Sample.Set), as.character(tjr3$Sample.Set))
-sample <- c(tjr1$Sample..Number, tjr2$Sample..Number, tjr3$Sample..Number)
-ssc.g.mL <- c(tjr1$NFR, tjr2$NFR, tjr3$NFR)
+sample <- c(tjr1$Sample..Number, tjr2$Sample..Number, tjr2$Sample..Number)
 ssc.df <- data.frame(cbind(sample.set, sample, ssc.g.mL))
 #remove NA rows
 ssc.df <- ssc.df[-which(is.na(ssc.g.mL)),]
@@ -48,9 +48,17 @@ q.date.time <- as.POSIXct(Q.data$date.time, "%m/%d/%Y %H:%M", tz="UTC")
 Q.cms <- approx(q.date.time, Q.data$q.cms, xout = date.time.ssc)
 names(Q.cms) <- c("date.time", "q.ssc")
 
+
 #plot timeseries with pts of when sample was collected
 plot(q.date.time, Q.data$q.cms, type="l")
 points(Q.cms$date.time, Q.cms$q.ssc, col="red")
+timeseries <- ggplot(data = data) +
+  geom_point(aes(x= q.cms, y=ssc.g.L, color = factor(date, levels = unique(date)))) + 
+  scale_y_log10() + scale_x_log10() +
+  labs(title = "Suspended Sediment Concentration - Storm Samples", subtitle="Tijuana River at Dairy Mart Rd.") + 
+  xlab("Discharge (cms)") + ylab("Suspended Sediment Concentration (g/L)") +
+  scale_colour_manual(name = "Date", labels = unique(data$date), values = c("#9e9ac8","#756bb1","#bae4b3","#31a354","#fdae61", "#d7191c")) 
+date.plot.ssc
 
 #also plot IBWC flow data to see how different
 #format date.time
@@ -73,12 +81,15 @@ data$date.time <- as.POSIXct(data$date.time, "%m/%d/%Y %H:%M", tz="UTC")
 date.plot.ssc <- ggplot(data = data) +
   geom_point(aes(x= q.cms, y=ssc.g.L, color = factor(date, levels = unique(date)))) + 
   scale_y_log10() + scale_x_log10() +
-  scale_colour_manual(name = "Date", labels = unique(data$date), values = c("#9e9ac8","#756bb1","#bae4b3","#31a354","#d95f0e")) 
+  labs(title = "Suspended Sediment Concentration - Storm Samples", subtitle="Tijuana River at Dairy Mart Rd.") + 
+  xlab("Discharge (cms)") + ylab("Suspended Sediment Concentration (g/L)") +
+  scale_colour_manual(name = "Date", labels = unique(data$date), values = c("#9e9ac8","#756bb1","#bae4b3","#31a354","#fdae61", "#d7191c")) 
+date.plot.ssc
 #plot color by event
 event.plot.ssc <- ggplot(data = data) +
-  geom_point(aes(x= q.cms, y=ssc.g.L, color = sample.set)) + 
-  scale_y_log10() + scale_x_log10() 
-  
+  geom_point(aes(x= q.cms, y=ssc.g.L, color = sample.set))
+  #scale_y_log10() + scale_x_log10() 
+event.plot.ssc
 
 #######Create rating curve Load and Q
 #use load (g/s) vs Q (m3/s)
@@ -91,20 +102,46 @@ data$load.g.s <- data$q.L.s * data$ssc.g.L
 load <- ggplot(data = data) +
   geom_point(aes(x= q.cms, y=load.g.s)) + 
   scale_y_log10() + scale_x_log10()
+load
 
 #plot color pt by date
 date.plot.load <- ggplot(data = data) +
   geom_point(aes(x= q.cms, y=load.g.s, color = factor(date, levels = unique(date)))) + 
   scale_y_log10() + scale_x_log10() +
-  scale_colour_manual(name = "Date", labels = unique(data$date), values = c("#9e9ac8","#756bb1","#74c476","#31a354","#d95f0e")) 
+  labs(title = "Sediment Load - Storm Samples", subtitle="Tijuana River at Dairy Mart Rd.") + 
+  xlab("Discharge (cms)") + ylab("Sediment Load (g/s)") +
+  scale_colour_manual(name = "Date", labels = unique(data$date), values = c("#9e9ac8","#756bb1","#74c476","#31a354","#fdae61", "#d7191c")) 
 date.plot.load
+#save
+ggsave(date.plot.load, filename="C:/Users/KristineT.SCCWRP2K/Documents/Git/TJR_sedimentflux/SedimentLoad_plot_TJR_dairymartrd.jpg", dpi=300, height=5, width=7)
+
+
 #plot color by event
 event.plot.load <- ggplot(data = data) +
   geom_point(aes(x= q.cms, y=load.g.s, color = sample.set)) + 
   scale_y_log10() + scale_x_log10() +
   scale_colour_manual(name = "Event", labels = unique(data$sample.set), values = c("#9e9ac8","#74c476","#d95f0e")) 
+event.plot.load
+
+#SSC plot g/L
+#plot color pt by date
+date.plot.ssc <- ggplot(data = data) +
+  geom_point(aes(x= q.cms, y=ssc.g.mL, color = factor(date, levels = unique(date)))) + 
+  scale_y_log10() + scale_x_log10() +
+  scale_colour_manual(name = "Date", labels = unique(data$date), values = c("#9e9ac8","#756bb1","#74c476","#31a354","#fdae61", "#d7191c")) 
+date.plot.ssc
+#save
+ggsave(date.plot.ssc, filename="C:/Users/KristineT.SCCWRP2K/Documents/Git/TJR_sedimentflux/SSC_plot_TJR_dairymartrd.jpg", dpi=300, height=5, width=7)
 
 
+#plot color by event
+event.plot.ssc <- ggplot(data = data) +
+  geom_point(aes(x= q.cms, y=ssc.g.mL, color = sample.set)) + 
+  scale_y_log10() + scale_x_log10() +
+  scale_colour_manual(name = "Event", labels = unique(data$sample.set), values = c("#9e9ac8","#74c476","#d95f0e")) 
+event.plot.ssc
+
+write.csv(data, file="C:/Users/KristineT.SCCWRP2K/Documents/Git/TJR_sedimentflux/TJR_sampledata_prelim_stormseason20192020_KTQ.csv", row.names = FALSE)
 
 
 #plot flow timeseries
