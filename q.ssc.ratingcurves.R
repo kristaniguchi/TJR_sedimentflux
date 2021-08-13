@@ -6,7 +6,11 @@ library(tidyverse)
 library(lubridate)
 
 #SSC sample dir
+#desktop:
 ssc.dir <- "C:/Users/KristineT.SCCWRP2K/OneDrive - SCCWRP/OPC_sedflux/TJR_data/from_Ben_SDSU/SCCWRP/processed.samples/"
+#laptop:
+#ssc.dir <- "C:/Users/KristineT/OneDrive - SCCWRP/OPC_sedflux/TJR_data/from_Ben_SDSU/SCCWRP/processed.samples/"
+
 files <- list.files(ssc.dir, full.names = TRUE)
 #read in SSC data
 tjr1 <- read.csv(files[3])
