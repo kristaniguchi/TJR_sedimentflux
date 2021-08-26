@@ -1,3 +1,6 @@
+library("dplyr")
+library("tidyverse")
+
 setwd("C:/Users/KristineT/SCCWRP/OPC Sediment Flux to Coast - TJR Sediment Flux/Data/TJR_data/IBWC_Q/historical/")
 #historical flows from IBWC Tijuana River at International Boundary: https://www.ibwc.gov/Water_Data/histflo3.htm
 
@@ -48,3 +51,40 @@ Q.usgs.ann$Q.usgs.MCM = Q.usgs.ann$Q.usgs.cms*3600*24*365/(1000000)
 
 
 write.csv(Q.usgs.ann,"Q.ann.mm.allQ.usgs.historical.csv")
+
+#compare IBWC with USGS overlapping time period
+Q.ann.USGS.IBWC <- Q.usgs.ann %>% 
+  left_join(Q.ann, by= "WY") %>% 
+  filter(WY > 1961) %>% 
+  mutate(Q.MCM.IBWC = Q.MCM)
+
+#1:1 line
+x <- c(0, 8)
+y <- c(0, 8)
+ref <- data.frame(cbind(x, y))
+
+#plot
+ggplot(Q.ann.USGS.IBWC, aes(x=Q.usgs.MCM, y=Q.MCM.IBWC)) +
+  geom_point() +
+  geom_line(ref, mapping=aes(x=x, y=y))
+
+#Compare IBWC historical from mean daily data to IBWC contemporary using 15-min data
+Q.ann.ibwc.15 <- read.csv(file = "Qann.mm.allQ.csv")
+
+#join with IBWC historical 
+Q.ann.ibwc.join <- Q.ann.ibwc.15 %>% 
+  left_join(Q.ann, by= "WY") %>% 
+  filter(WY < 2010) %>% 
+  mutate(Q.mm.IBWC.Hist = Q.mm.y) %>% 
+  rename(Q.mm.IBWC = Q.mm.x)
+
+#1:1 line
+x <- c(0, 80)
+y <- c(0, 80)
+ref <- data.frame(cbind(x, y))
+
+#plot
+ggplot(Q.ann.ibwc.join, aes(x=Q.mm.IBWC.Hist, y=Q.mm.IBWC)) +
+  geom_point() +
+  geom_line(ref, mapping=aes(x=x, y=y))
+
