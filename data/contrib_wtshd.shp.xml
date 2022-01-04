@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20190327</CreaDate><CreaTime>12393300</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.5\ArcToolbox\Toolboxes\Conversion Tools.tbx\RasterToPolygon" Date="20190327" Time="123933">RasterToPolygon cntr_wtshd "L:\sediment flux to the coast_OPC_ES\Data\RawData\Spatial_Data\TRwatershed_dams\contrib_wtshd.shp" SIMPLIFY VALUE</Process></lineage></DataProperties></Esri></metadata>
