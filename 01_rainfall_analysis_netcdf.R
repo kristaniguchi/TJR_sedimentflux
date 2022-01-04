@@ -94,6 +94,11 @@ stack.names <- gsub("[.]", "-", stack.names)
 #format as date, find water year associated with each stack, water year 1950 is partial, start with WY 1951
 date <- as.POSIXct(stack.names, format = "%Y-%m-%d")
 water.year <- waterYear(date)
+days.month <- lubridate::days_in_month(date)
+
+#multiply the raster value by number of days in a month
+raster.crop.all <- raster.crop.all*days.month
+raster.crop.active <- raster.crop.active*days.month
 
 #stack algebra - sum each cell based on water year total precip
 wy.total.p.all <- stackApply(raster.crop.all, water.year, fun=sum)
