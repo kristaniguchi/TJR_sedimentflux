@@ -1,7 +1,9 @@
 library("dplyr")
 library("tidyverse")
 
-setwd("C:/Users/KristineT/SCCWRP/OPC Sediment Flux to Coast - TJR Sediment Flux/Data/TJR_data/IBWC_Q/historical/")
+#setwd("C:/Users/KristineT/SCCWRP/OPC Sediment Flux to Coast - TJR Sediment Flux/Data/TJR_data/IBWC_Q/historical/")
+setwd("C:/Users/KristineT.SCCWRP2K/SCCWRP/OPC Sediment Flux to Coast - TJR Sediment Flux/Data/TJR_data/IBWC_Q/historical/")
+
 #historical flows from IBWC Tijuana River at International Boundary: https://www.ibwc.gov/Water_Data/histflo3.htm
 
 Q = read.csv("IBWC_historicalmeandailyQ_TJintlborder.csv",header=TRUE,skip=1)
