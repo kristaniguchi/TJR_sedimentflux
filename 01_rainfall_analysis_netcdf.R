@@ -15,8 +15,8 @@ library(smwrBase)
 library(processNC)
 
 #Load packages to read netCDF files
-library(RNetCDF)
-library(ncdf4)
+#library(RNetCDF)
+#library(ncdf4)
 
 #Load Plotting package
 library(fields)
@@ -59,13 +59,11 @@ dat<-read.nc(nc.data)
 TJR.all <- st_read(paste0(shape.dir, "contrib_wtshd_dissolve.shp"), quiet = T) %>% 
   st_transform(crs="+proj=longlat +datum=WGS84 +no_defs ") 
 
-
 #active TJR watershed downstream of dams
 TJR.active <- st_read(paste0(shape.dir, "active_wtshd.shp"), quiet = T) %>% 
   st_transform(crs="+proj=longlat +datum=WGS84 +no_defs ") 
 
-
-#check extent of shapefiles
+#check spatial extent of shapefiles
 e.all <- extent(TJR.all)
 e.active <- extent(TJR.active)
 
@@ -113,7 +111,6 @@ names(wy.total.p.active) <- gsub("level_", "WY_", names(wy.total.p.active))
 #create vector of unique water years
 Water.Year <- as.numeric(as.character(unique(water.year)))
 
-
 #summarize the mean total annual precip for each watershed all and active, convert m to mm
 mean.wy.totalP.all.mm <- t(raster::extract(wy.total.p.all, TJR.all, fun='mean')*1000)
 mean.wy.totalP.active.mm <- t(raster::extract(wy.total.p.active, TJR.active, fun='mean')*1000)
@@ -121,15 +118,12 @@ mean.wy.totalP.active.mm <- t(raster::extract(wy.total.p.active, TJR.active, fun
 sum.wy.totalP.all.mm <- t(raster::extract(wy.total.p.all, TJR.all, fun='sum')*1000)
 sum.wy.totalP.active.mm <- t(raster::extract(wy.total.p.active, TJR.active, fun='sum')*1000)
 
-
-
 #create dataframe with active mean total P and all mean total P
 output <- data.frame(cbind(Water.Year, mean.wy.totalP.all.mm, mean.wy.totalP.active.mm, sum.wy.totalP.all.mm, sum.wy.totalP.active.mm))
 #remove the first row of 1950 because it was partial year
 output <- output[2:length(output$Water.Year),]
 #save colnames
 names(output) <- c("Water.Year", "mean.wy.totalP.all.mm", "mean.wy.totalP.active.mm", "sum.wy.totalP.all.mm", "sum.wy.totalP.active.mm")
-
 
 #write csv
 write.csv(output, file="C:/Users/KristineT.SCCWRP2K/Documents/Git/TJR_sedimentflux/output_data/mean_WY_totalP_TJR_all_active_wtshd.csv", row.names=FALSE)
