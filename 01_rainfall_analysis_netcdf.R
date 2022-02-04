@@ -15,8 +15,8 @@ library(smwrBase)
 library(processNC)
 
 #Load packages to read netCDF files
-#library(RNetCDF)
-#library(ncdf4)
+library(RNetCDF)
+library(ncdf4)
 
 #Load Plotting package
 library(fields)
@@ -49,7 +49,9 @@ raster.all <- stack(fname, varname="tp")
 #read in netcdf to get units
 nc.data <- open.nc(fname)
 print(nc.data)
-dat<-read.nc(nc.data)
+dat <-read.nc(nc.data)
+
+
 
 ######################################################################
 ###Clip the raster to watershed boundaries
@@ -128,6 +130,6 @@ names(output) <- c("Water.Year", "mean.wy.totalP.all.mm", "mean.wy.totalP.active
 #write csv
 write.csv(output, file="C:/Users/KristineT.SCCWRP2K/Documents/Git/TJR_sedimentflux/output_data/mean_WY_totalP_TJR_all_active_wtshd.csv", row.names=FALSE)
 
-
+list.files(pattern=".shp")
 
 
